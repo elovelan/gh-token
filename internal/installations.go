@@ -15,7 +15,7 @@ import (
 
 // Installations is the entrypoint for the installations command
 func Installations(c *cli.Context) error {
-	appID := c.String("app-id")
+	appID := AppIdentifier(c)
 	keyPath := c.String("key")
 	keyBase64 := c.String("base64-key")
 	hostname := strings.ToLower(c.String("hostname"))

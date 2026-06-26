@@ -15,7 +15,7 @@ import (
 
 // Generate is the entrypoint for the generate command
 func Generate(c *cli.Context) error {
-	appID := c.String("app-id")
+	appID := AppIdentifier(c)
 	installationID := c.String("installation-id")
 	keyPath := c.String("key")
 	keyBase64 := c.String("base64-key")

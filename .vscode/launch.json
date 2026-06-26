@@ -12,7 +12,7 @@
                 "installations",
                 "-k",
                 "${workspaceFolder}/.keys/test-key.pem",
-                "--app-id",
+                "--client-id",
                 "394554"
             ],
             "showLog": true,

@@ -22,7 +22,7 @@ func createTestContextForInstallations(flags map[string]interface{}) *cli.Contex
 
 	// Set default values
 	defaults := map[string]interface{}{
-		"app-id":     "",
+		"client-id":     "",
 		"key":        "",
 		"base64-key": "",
 		"hostname":   "api.github.com",
@@ -91,7 +91,7 @@ func TestInstallations(t *testing.T) {
 		{
 			name: "successful_list_installations_with_key_file",
 			flags: map[string]interface{}{
-				"app-id":   "123456",
+				"client-id":   "123456",
 				"key":      "fixtures/test-private-key.test.pem",
 				"hostname": "api.github.com",
 			},
@@ -104,7 +104,7 @@ func TestInstallations(t *testing.T) {
 		{
 			name: "successful_list_installations_with_base64_key",
 			flags: map[string]interface{}{
-				"app-id":     "123456",
+				"client-id":     "123456",
 				"base64-key": keyBase64,
 				"hostname":   "api.github.com",
 			},
@@ -117,7 +117,7 @@ func TestInstallations(t *testing.T) {
 		{
 			name: "successful_list_multiple_installations",
 			flags: map[string]interface{}{
-				"app-id":   "123456",
+				"client-id":   "123456",
 				"key":      "fixtures/test-private-key.test.pem",
 				"hostname": "api.github.com",
 			},
@@ -130,7 +130,7 @@ func TestInstallations(t *testing.T) {
 		{
 			name: "successful_empty_installations_list",
 			flags: map[string]interface{}{
-				"app-id":   "123456",
+				"client-id":   "123456",
 				"key":      "fixtures/test-private-key.test.pem",
 				"hostname": "api.github.com",
 			},
@@ -143,7 +143,7 @@ func TestInstallations(t *testing.T) {
 		{
 			name: "successful_with_custom_hostname_without_api_path",
 			flags: map[string]interface{}{
-				"app-id":   "123456",
+				"client-id":   "123456",
 				"key":      "fixtures/test-private-key.test.pem",
 				"hostname": "github.company.com",
 			},
@@ -156,7 +156,7 @@ func TestInstallations(t *testing.T) {
 		{
 			name: "successful_with_custom_hostname_with_api_path",
 			flags: map[string]interface{}{
-				"app-id":   "123456",
+				"client-id":   "123456",
 				"key":      "fixtures/test-private-key.test.pem",
 				"hostname": "github.company.com/api/v3",
 			},
@@ -169,7 +169,7 @@ func TestInstallations(t *testing.T) {
 		{
 			name: "successful_with_mixed_case_hostname",
 			flags: map[string]interface{}{
-				"app-id":   "123456",
+				"client-id":   "123456",
 				"key":      "fixtures/test-private-key.test.pem",
 				"hostname": "GitHub.Company.COM",
 			},
@@ -182,7 +182,7 @@ func TestInstallations(t *testing.T) {
 		{
 			name: "error_no_key_specified",
 			flags: map[string]interface{}{
-				"app-id": "123456",
+				"client-id": "123456",
 			},
 			setupMocks:    func() {},
 			expectedError: "either --key or --base64-key must be specified",
@@ -190,7 +190,7 @@ func TestInstallations(t *testing.T) {
 		{
 			name: "error_both_keys_specified",
 			flags: map[string]interface{}{
-				"app-id":     "123456",
+				"client-id":     "123456",
 				"key":        "fixtures/test-private-key.test.pem",
 				"base64-key": keyBase64,
 			},
@@ -200,7 +200,7 @@ func TestInstallations(t *testing.T) {
 		{
 			name: "error_invalid_key_file",
 			flags: map[string]interface{}{
-				"app-id": "123456",
+				"client-id": "123456",
 				"key":    "fixtures/nonexistent.pem",
 			},
 			setupMocks:    func() {},
@@ -209,7 +209,7 @@ func TestInstallations(t *testing.T) {
 		{
 			name: "error_invalid_base64_key",
 			flags: map[string]interface{}{
-				"app-id":     "123456",
+				"client-id":     "123456",
 				"base64-key": "invalid-base64-string",
 			},
 			setupMocks:    func() {},
@@ -218,7 +218,7 @@ func TestInstallations(t *testing.T) {
 		{
 			name: "error_http_request_fails",
 			flags: map[string]interface{}{
-				"app-id":   "123456",
+				"client-id":   "123456",
 				"key":      "fixtures/test-private-key.test.pem",
 				"hostname": "api.github.com",
 			},
@@ -231,7 +231,7 @@ func TestInstallations(t *testing.T) {
 		{
 			name: "error_http_status_not_200",
 			flags: map[string]interface{}{
-				"app-id":   "123456",
+				"client-id":   "123456",
 				"key":      "fixtures/test-private-key.test.pem",
 				"hostname": "api.github.com",
 			},
@@ -244,7 +244,7 @@ func TestInstallations(t *testing.T) {
 		{
 			name: "error_invalid_json_response",
 			flags: map[string]interface{}{
-				"app-id":   "123456",
+				"client-id":   "123456",
 				"key":      "fixtures/test-private-key.test.pem",
 				"hostname": "api.github.com",
 			},

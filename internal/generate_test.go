@@ -22,7 +22,7 @@ func createTestContext(flags map[string]interface{}) *cli.Context {
 
 	// Set default values
 	defaults := map[string]interface{}{
-		"app-id":          "",
+		"client-id":          "",
 		"installation-id": "",
 		"key":             "",
 		"base64-key":      "",
@@ -91,7 +91,7 @@ func TestGenerate(t *testing.T) {
 		{
 			name: "successful_token_generation_with_key_file",
 			flags: map[string]interface{}{
-				"app-id":          "123456",
+				"client-id":          "123456",
 				"installation-id": "12345",
 				"key":             "fixtures/test-private-key.test.pem",
 				"hostname":        "api.github.com",
@@ -107,7 +107,7 @@ func TestGenerate(t *testing.T) {
 		{
 			name: "successful_token_generation_with_base64_key",
 			flags: map[string]interface{}{
-				"app-id":          "123456",
+				"client-id":          "123456",
 				"installation-id": "12345",
 				"base64-key":      keyBase64,
 				"hostname":        "api.github.com",
@@ -123,7 +123,7 @@ func TestGenerate(t *testing.T) {
 		{
 			name: "successful_with_auto_installation_id",
 			flags: map[string]interface{}{
-				"app-id":     "123456",
+				"client-id":     "123456",
 				"key":        "fixtures/test-private-key.test.pem",
 				"hostname":   "api.github.com",
 				"jwt-expiry": 10,
@@ -140,7 +140,7 @@ func TestGenerate(t *testing.T) {
 		{
 			name: "successful_jwt_only",
 			flags: map[string]interface{}{
-				"app-id":     "123456",
+				"client-id":     "123456",
 				"key":        "fixtures/test-private-key.test.pem",
 				"jwt":        true,
 				"jwt-expiry": 10,
@@ -152,7 +152,7 @@ func TestGenerate(t *testing.T) {
 		{
 			name: "error_no_key_specified",
 			flags: map[string]interface{}{
-				"app-id": "123456",
+				"client-id": "123456",
 			},
 			setupMocks:    func() {},
 			expectedError: "either --key or --base64-key must be specified",
@@ -160,7 +160,7 @@ func TestGenerate(t *testing.T) {
 		{
 			name: "error_both_keys_specified",
 			flags: map[string]interface{}{
-				"app-id":     "123456",
+				"client-id":     "123456",
 				"key":        "fixtures/test-private-key.test.pem",
 				"base64-key": keyBase64,
 			},
@@ -170,7 +170,7 @@ func TestGenerate(t *testing.T) {
 		{
 			name: "error_invalid_key_file",
 			flags: map[string]interface{}{
-				"app-id": "123456",
+				"client-id": "123456",
 				"key":    "fixtures/nonexistent.pem",
 			},
 			setupMocks:    func() {},
@@ -179,7 +179,7 @@ func TestGenerate(t *testing.T) {
 		{
 			name: "error_invalid_base64_key",
 			flags: map[string]interface{}{
-				"app-id":     "123456",
+				"client-id":     "123456",
 				"base64-key": "invalid-base64-string",
 			},
 			setupMocks:    func() {},
@@ -188,7 +188,7 @@ func TestGenerate(t *testing.T) {
 		{
 			name: "error_installation_not_found",
 			flags: map[string]interface{}{
-				"app-id": "123456",
+				"client-id": "123456",
 				"key":    "fixtures/test-private-key.test.pem",
 			},
 			setupMocks: func() {
@@ -200,7 +200,7 @@ func TestGenerate(t *testing.T) {
 		{
 			name: "error_token_generation_fails",
 			flags: map[string]interface{}{
-				"app-id":          "123456",
+				"client-id":          "123456",
 				"installation-id": "12345",
 				"key":             "fixtures/test-private-key.test.pem",
 			},
@@ -398,7 +398,7 @@ func TestGenerateAdvancedCases(t *testing.T) {
 			name: "jwt_expiry_below_minimum",
 			setupTest: func() *cli.Context {
 				return createTestContext(map[string]interface{}{
-					"app-id":     "123456",
+					"client-id":     "123456",
 					"key":        "fixtures/test-private-key.test.pem",
 					"jwt-expiry": 0, // Below minimum, should be adjusted to 10
 					"jwt":        true,
@@ -412,7 +412,7 @@ func TestGenerateAdvancedCases(t *testing.T) {
 			name: "jwt_expiry_above_maximum",
 			setupTest: func() *cli.Context {
 				return createTestContext(map[string]interface{}{
-					"app-id":     "123456",
+					"client-id":     "123456",
 					"key":        "fixtures/test-private-key.test.pem",
 					"jwt-expiry": 15, // Above maximum, should be adjusted to 10
 					"jwt":        true,
@@ -426,7 +426,7 @@ func TestGenerateAdvancedCases(t *testing.T) {
 			name: "hostname_without_api_path",
 			setupTest: func() *cli.Context {
 				return createTestContext(map[string]interface{}{
-					"app-id":          "123456",
+					"client-id":          "123456",
 					"installation-id": "12345",
 					"key":             "fixtures/test-private-key.test.pem",
 					"hostname":        "github.company.com", // Without /api/v3
@@ -448,7 +448,7 @@ func TestGenerateAdvancedCases(t *testing.T) {
 			name: "hostname_with_api_path_already_included",
 			setupTest: func() *cli.Context {
 				return createTestContext(map[string]interface{}{
-					"app-id":          "123456",
+					"client-id":          "123456",
 					"installation-id": "12345",
 					"key":             "fixtures/test-private-key.test.pem",
 					"hostname":        "github.company.com/api/v3", // Already has /api/v3
@@ -505,7 +505,7 @@ func TestGenerateWithOutputFormats(t *testing.T) {
 		{
 			name: "json_output_format",
 			flags: map[string]interface{}{
-				"app-id":          "123456",
+				"client-id":          "123456",
 				"installation-id": "12345",
 				"key":             "fixtures/test-private-key.test.pem",
 				"hostname":        "api.github.com",
@@ -520,7 +520,7 @@ func TestGenerateWithOutputFormats(t *testing.T) {
 		{
 			name: "token_only_output_format",
 			flags: map[string]interface{}{
-				"app-id":          "123456",
+				"client-id":          "123456",
 				"installation-id": "12345",
 				"key":             "fixtures/test-private-key.test.pem",
 				"hostname":        "api.github.com",
@@ -536,7 +536,7 @@ func TestGenerateWithOutputFormats(t *testing.T) {
 		{
 			name: "jwt_output_format",
 			flags: map[string]interface{}{
-				"app-id":     "123456",
+				"client-id":     "123456",
 				"key":        "fixtures/test-private-key.test.pem",
 				"jwt":        true,
 				"jwt-expiry": 10,
