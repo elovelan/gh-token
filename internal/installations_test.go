@@ -22,7 +22,8 @@ func createTestContextForInstallations(flags map[string]interface{}) *cli.Contex
 
 	// Set default values
 	defaults := map[string]interface{}{
-		"client-id":     "",
+		"client-id":  "",
+		"app-id":     "",
 		"key":        "",
 		"base64-key": "",
 		"hostname":   "api.github.com",

@@ -5,7 +5,18 @@ import "github.com/urfave/cli/v2"
 // GenerateFlags returns the CLI flags for the generate command
 func GenerateFlags() []cli.Flag {
 	return []cli.Flag{
-		AppIdentifierFlag(),
+		&cli.StringFlag{
+			Name:     "client-id",
+			Usage:    "GitHub App client ID (preferred)",
+			Required: false,
+			Aliases:  []string{"client_id"},
+		},
+		&cli.StringFlag{
+			Name:     "app-id",
+			Usage:    "GitHub App application ID",
+			Required: false,
+			Aliases:  []string{"i", "app_id"},
+		},
 		&cli.StringFlag{
 			Name:     "installation-id",
 			Usage:    "GitHub App installation ID. Defaults to the first installation returned by the GitHub API if not specified",

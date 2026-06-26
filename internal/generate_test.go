@@ -23,6 +23,7 @@ func createTestContext(flags map[string]interface{}) *cli.Context {
 	// Set default values
 	defaults := map[string]interface{}{
 		"client-id":          "",
+		"app-id":             "",
 		"installation-id": "",
 		"key":             "",
 		"base64-key":      "",
@@ -145,6 +146,43 @@ func TestGenerate(t *testing.T) {
 				"jwt":        true,
 				"jwt-expiry": 10,
 				"silent":     true,
+			},
+			setupMocks:    func() {},
+			expectedError: "",
+		},
+		{
+			name: "error_no_app_identifier_specified",
+			flags: map[string]interface{}{
+				"key": "fixtures/test-private-key.test.pem",
+			},
+			setupMocks:    func() {},
+			expectedError: "either --client-id or --app-id must be specified",
+		},
+		{
+			name: "successful_token_generation_with_app_id",
+			flags: map[string]interface{}{
+				"app-id":          "123456",
+				"installation-id": "12345",
+				"key":             "fixtures/test-private-key.test.pem",
+				"hostname":        "api.github.com",
+				"jwt-expiry":      10,
+				"silent":          true,
+			},
+			setupMocks: func() {
+				httpmock.RegisterResponder("POST", "https://api.github.com/app/installations/12345/access_tokens",
+					httpmock.NewStringResponder(201, string(tokenJSON)))
+			},
+			expectedError: "",
+		},
+		{
+			name: "prefers_client_id_when_both_specified",
+			flags: map[string]interface{}{
+				"client-id":       "Iv23aBcD9eFgH1jKlMnO",
+				"app-id":          "123456",
+				"key":             "fixtures/test-private-key.test.pem",
+				"jwt":             true,
+				"jwt-expiry":      10,
+				"silent":          true,
 			},
 			setupMocks:    func() {},
 			expectedError: "",
@@ -560,6 +598,58 @@ func TestGenerateWithOutputFormats(t *testing.T) {
 			if !getBoolFlag(tt.flags, "jwt") {
 				info := httpmock.GetCallCountInfo()
 				assert.Greater(t, len(info), 0, "Expected HTTP calls to be made")
+			}
+		})
+	}
+}
+
+func TestResolveIss(t *testing.T) {
+	tests := []struct {
+		name          string
+		flags         map[string]interface{}
+		expectedIss   string
+		expectedError string
+	}{
+		{
+			name: "client_id_only",
+			flags: map[string]interface{}{
+				"client-id": "Iv23aBcD9eFgH1jKlMnO",
+			},
+			expectedIss: "Iv23aBcD9eFgH1jKlMnO",
+		},
+		{
+			name: "app_id_only",
+			flags: map[string]interface{}{
+				"app-id": "123456",
+			},
+			expectedIss: "123456",
+		},
+		{
+			name: "prefers_client_id",
+			flags: map[string]interface{}{
+				"client-id": "Iv23aBcD9eFgH1jKlMnO",
+				"app-id":    "123456",
+			},
+			expectedIss: "Iv23aBcD9eFgH1jKlMnO",
+		},
+		{
+			name:          "neither_specified",
+			flags:         map[string]interface{}{},
+			expectedError: "either --client-id or --app-id must be specified",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			iss, err := resolveIss(createTestContext(tt.flags))
+
+			if tt.expectedError != "" {
+				assert.Error(t, err)
+				assert.Contains(t, err.Error(), tt.expectedError)
+				assert.Equal(t, "", iss)
+			} else {
+				assert.NoError(t, err)
+				assert.Equal(t, tt.expectedIss, iss)
 			}
 		})
 	}

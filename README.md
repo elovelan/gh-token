@@ -64,7 +64,7 @@ Follow [these steps](https://docs.github.com/en/developers/apps/creating-a-githu
 
 Compatible with [GitHub Enterprise Server](https://github.com/enterprise).
 
-GitHub recommends using your app's **client ID** (rather than the numeric application ID) as the JWT `iss` claim when authenticating. Both values are accepted by the GitHub API and can be passed via `--client-id` (preferred) or `--app-id`.
+GitHub recommends using your app's **client ID** (rather than the numeric application ID) when authenticating. Both values are accepted by the GitHub API and can be passed via `--client-id` (preferred) or `--app-id`.
 
 ```text
 NAME:
@@ -94,7 +94,7 @@ GLOBAL OPTIONS:
 ```shell
 gh token generate \
     --key ./.keys/private-key.pem \
-    --client-id 1122334 \
+    --client-id Iv23aBcD9eFgH1jKlMnO \
     --installation-id 5566778
 ```
 
@@ -117,7 +117,7 @@ gh token generate \
 ```shell
 gh token generate \
     --base64-key $(printf "%s" $APP_KEY | base64) \
-    --client-id 1122334 \
+    --client-id Iv23aBcD9eFgH1jKlMnO \
     --installation-id 5566778
 ```
 
@@ -140,7 +140,7 @@ gh token generate \
 ```shell
 gh token generate \
     --base64-key $(printf "%s" $APP_KEY | base64) \
-    --client-id 1122334 \
+    --client-id Iv23aBcD9eFgH1jKlMnO \
     --installation-id 5566778 \
     --hostname "github.example.com"
 ```
@@ -164,7 +164,7 @@ gh token generate \
 ```shell
 gh token installations \
     --key ./private-key.pem \
-    --client-id 2233445
+    --client-id Iv23aBcD9eFgH1jKlMnO
 ```
 
 <details>
@@ -248,9 +248,9 @@ Successfully revoked installation token
 1. You need to create a secret to store the **applications private key** securely (this can be an organization or a repository secret):
     ![Create private key secret](images/create_secret.png)
 
-1. You need to create another secret to store the **client ID** (or application ID) securely (same as the step above). GitHub recommends using the client ID; `--app-id` remains supported for backward compatibility.
+1. Store the **client ID** (or application ID) as a [repository or organization variable](https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/store-information-in-variables). GitHub recommends using the client ID; `--app-id` remains supported for backward compatibility.
 
-1. The secrets need to be provided as an environment variable then encoded into base64 as show in the workflow example:
+1. The private key secret and client ID variable need to be provided as environment variables. The private key is encoded into base64 as shown in the workflow example:
 
 This example is designed to run on GitHub Enterprise Server. To use the same workflow with GitHub.com update the hostname to `api.github.com` and change the API URL in the testing step.
 
@@ -280,7 +280,7 @@ jobs:
           | jq -r ".token")
         echo "token=$token" >> $GITHUB_OUTPUT
       env:
-        CLIENT_ID: ${{ secrets.CLIENT_ID }}
+        CLIENT_ID: ${{ vars.CLIENT_ID }}
         APP_PRIVATE_KEY: ${{ secrets.APP_KEY }}
     # To test the token we will use it to fetch the list of repositories
     # belonging to our organization
